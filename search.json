@@ -1,0 +1,16 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "This project was created for Kane’s Data Science Bootcamp. I used AI tools."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Distribution of Bachelor’s Degree in Los Angeles",
+    "section": "",
+    "text": "This interactive map visualizes the percentage of adults aged 25 and older with a bachelor’s degree or higher across census tracts in Los Angeles County, using data from the 2017-2021 American Community Survey (ACS). The map is created with R packages tidycensus and leaflet, where the ACS data is pulled directly with geographic boundaries included. Each census tract is shaded according to the proportion of residents holding a bachelor’s degree or higher, with a color gradient from light to dark blue representing lower to higher educational attainment. Users can explore the map by hovering or clicking on each tract to view detailed information in popups, including the tract’s name and exact percentage. A legend clarifies the color scale, helping to quickly identify areas with varying education levels throughout Los Angeles County. This visualization provides a compelling way to understand the spatial distribution of educational attainment in the region."
+  }
+]

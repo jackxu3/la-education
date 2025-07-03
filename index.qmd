@@ -1,7 +1,70 @@
 ---
 title: "LA Education"
+author: "Jack Xu"
+execute:
+  echo: FALSE
+  message: FALSE
+  warning: FALSE
 ---
 
-This is a Quarto website.
+```{r}
+library(tidycensus)
+library(dplyr)
+library(leaflet)
+```
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+```{r}
+# Set your Census API key first (if not already set)
+# census_api_key("YOUR_API_KEY", install = TRUE)
+
+# Variables for bachelor's degree or higher
+vars <- c(
+  total_pop = "B15003_001",
+  bachelors = "B15003_022",
+  masters = "B15003_023",
+  professional = "B15003_024",
+  doctorate = "B15003_025"
+)
+
+# Get data for census tracts in Los Angeles County (FIPS code 037) in California (state code 06)
+edu_data <- suppressMessages(get_acs(
+  geography = "tract",
+  variables = vars,
+  state = "06",
+  county = "037",
+  year = 2021,  # or most recent ACS year available
+  survey = "acs5",
+  output = "wide",
+  geometry = TRUE
+))
+
+# Calculate % with bachelor's or higher
+edu_data <- edu_data %>%
+  mutate(
+    total_bachelors_up = bachelorsE + mastersE + professionalE + doctorateE,
+    pct_bachelors_up = 100 * total_bachelors_up / total_popE
+  ) %>%
+  select(GEOID, NAME, pct_bachelors_up)
+```
+
+```{r}
+pal <- colorNumeric("YlGnBu", domain = edu_data$pct_bachelors_up)
+
+leaflet(edu_data) %>%
+  addTiles() %>%
+  addPolygons(
+    fillColor = ~pal(pct_bachelors_up),
+    fillOpacity = 0.7,
+    weight = 1,
+    color = "white",
+    popup = ~paste0(NAME, "<br/>", "Bachelor's Degree or Higher: ", round(pct_bachelors_up, 1), "%")
+  ) %>%
+  addLegend(
+    pal = pal,
+    values = ~pct_bachelors_up,
+    title = "Bachelor's Degree or Higher (%)",
+    position = "bottomright"
+  )
+```
+
+This interactive map visualizes the percentage of adults aged 25 and older with a bachelor’s degree or higher across census tracts in Los Angeles County, using data from the 2017-2021 American Community Survey (ACS). The map is created with R packages tidycensus and leaflet, where the ACS data is pulled directly with geographic boundaries included. Each census tract is shaded according to the proportion of residents holding a bachelor’s degree or higher, with a color gradient from light to dark blue representing lower to higher educational attainment. Users can explore the map by hovering or clicking on each tract to view detailed information in popups, including the tract’s name and exact percentage. A legend clarifies the color scale, helping to quickly identify areas with varying education levels throughout Los Angeles County. This visualization provides a compelling way to understand the spatial distribution of educational attainment in the region.
